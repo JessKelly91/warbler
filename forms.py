@@ -30,7 +30,7 @@ class EditUserForm(FlaskForm):
 
     
     username = StringField('Username')
-    email = StringField('E-mail', validators=[Email()])
+    email = StringField('E-mail')
     image_url = StringField('Image URL')
     header_image_url = StringField('Header Image URL')
     bio = TextAreaField('Bio')

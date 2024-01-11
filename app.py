@@ -1,4 +1,5 @@
 import os
+import pdb
 
 from flask import Flask, render_template, request, flash, redirect, session, g
 from flask_debugtoolbar import DebugToolbarExtension
@@ -218,7 +219,29 @@ def stop_following(follow_id):
 def profile():
     """Update profile for current user."""
 
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+
     form = EditUserForm()
+
+    if form.validate_on_submit():
+        user = User.query.get_or_404(session[CURR_USER_KEY])
+
+        if not user.authenticate(user.username, form.password.data):
+            flash("Invalid credentials.", 'danger')
+            
+            return redirect('/users/profile')
+        
+        user.username = form.username.data if form.username.data else user.username
+        user.email = form.email.data if form.email.data else user.email
+        user.image_url = form.image_url.data if form.email.data else user.image_url
+        user.header_image_url = form.header_image_url.data if form.header_image_url else user.header_image_url
+        user.bio = form.bio.data if form.bio.data else user.bio
+
+        db.session.commit()
+
+        return redirect(f'/users/{user.id}')
 
     return render_template('users/edit.html', form=form)
 
