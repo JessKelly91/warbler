@@ -372,17 +372,19 @@ def homepage():
     """
 
     if g.user:
-        user = User.query.get_or_404(session[CURR_USER_KEY])
+        user = User.query.get_or_404(g.user.id)
         followed_users = (Follows
                           .query
                           .filter(Follows.user_following_id == user.id)
                           .all())
     
-        followed_users_ids = [followed_user.user_being_followed_id for followed_user in followed_users]
+        users_to_display = [followed_user.user_being_followed_id for followed_user in followed_users]
+
+        users_to_display.append(user.id)
 
         messages = (Message
                     .query
-                    .filter(Message.user_id.in_(followed_users_ids))
+                    .filter(Message.user_id.in_(users_to_display))
                     .order_by(Message.timestamp.desc())
                     .limit(100)
                     .all())
