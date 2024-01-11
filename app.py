@@ -261,7 +261,7 @@ def delete_like(msg_id):
     return redirect(f'/users/{g.user.id}/likes')
 
 
-############ CURR USER PROFILE ROUTES ############
+############ CURR USER EDIT/DELETE PROFILE ROUTES ############
 
 @app.route('/users/profile', methods=["GET", "POST"])
 def profile():

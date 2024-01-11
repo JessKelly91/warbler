@@ -3,7 +3,7 @@
 {% block content %}
 
 <div id="warbler-hero" class="full-width">
-  {% if user.header_image_url %}
+  {% if user.header_image_url%}
     <img src="{{ user.header_image_url }}" alt="Header Image for {{ user.username }}" id="header-image" class="full-width">
   {% else %}
     <img src="/static/images/warbler-hero.jpg" alt="Header Image for {{ user.username }}" id="header-image" class="full-width">
