@@ -243,6 +243,20 @@ def show_likes(user_id):
     return render_template('users/likes.html', user=user, message=messages)
 
 
+@app.route('/users/add_like/<int:msg_id>')
+def add_like(msg_id):
+    """Add like to user.like"""
+
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+    
+    message = Message.query.get_or_404(msg_id)
+    g.user.likes.append(message)
+    db.session.commit()
+
+    return redirect(f"users/{g.user.id}/likes")
+
 
 ############ CURR USER PROFILE ROUTES ############
 
