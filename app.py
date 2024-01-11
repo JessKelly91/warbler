@@ -243,7 +243,7 @@ def show_likes(user_id):
     return render_template('users/likes.html', user=user, message=messages)
 
 
-@app.route('/users/add_like/<int:msg_id>')
+@app.route('/users/add_like/<int:msg_id>', methods=['POST'])
 def add_like(msg_id):
     """Add like to user.like"""
 
@@ -255,7 +255,7 @@ def add_like(msg_id):
     g.user.likes.append(message)
     db.session.commit()
 
-    return redirect(f"users/{g.user.id}/likes")
+    return redirect(f"/users/{g.user.id}/likes")
 
 
 ############ CURR USER PROFILE ROUTES ############
