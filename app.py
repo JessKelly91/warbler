@@ -247,7 +247,7 @@ def add_like(msg_id):
     return redirect(f"/users/{g.user.id}/likes")
 
 @app.route('/users/delete_like/<int:msg_id>', methods=["POST"])
-def delete_like(msg_id)
+def delete_like(msg_id):
     """Delete a like for the currently-logged-in user"""
 
     if not g.user:
@@ -387,7 +387,7 @@ def homepage():
                     .limit(100)
                     .all())
 
-        return render_template('home.html', messages=messages)
+        return render_template('home.html', messages=messages, user=user)
 
     else:
         return render_template('home-anon.html')
