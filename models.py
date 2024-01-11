@@ -108,7 +108,6 @@ class User(db.Model):
         secondary="follows",
         primaryjoin=(Follows.user_following_id == id),
         secondaryjoin=(Follows.user_being_followed_id == id),
-        viewonly=True
     )
 
     likes = db.relationship(
@@ -198,7 +197,7 @@ class Message(db.Model):
         nullable=False
     )
 
-    user = db.relationship('User', viewonly=True)
+    user = db.relationship('User')
 
 
 def connect_db(app):

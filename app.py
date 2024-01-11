@@ -6,7 +6,7 @@ from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 
 from forms import UserAddForm, LoginForm, MessageForm, EditUserForm
-from models import db, connect_db, User, Message, Follows
+from models import db, connect_db, User, Message, Follows, Likes
 
 CURR_USER_KEY = "curr_user"
 
@@ -162,6 +162,7 @@ def users_show(user_id):
                 .all())
     return render_template('users/show.html', user=user, messages=messages)
 
+########### USER FOLLOW ROUTES ############
 
 @app.route('/users/<int:user_id>/following')
 def show_following(user_id):
@@ -216,6 +217,34 @@ def stop_following(follow_id):
 
     return redirect(f"/users/{g.user.id}/following")
 
+############ USER LIKES ROUTES ############
+
+@app.route('/users/<int:user_id>/likes')
+def show_likes(user_id):
+    """Show list of messages this user likes"""
+
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+    
+    user = User.query.get_or_404(user_id)
+    user_likes = (Likes
+             .query
+             .filter(Likes.user_id == user.id)
+             .all())
+    
+    user_likes_msg_ids = [user_like.message_id for user_like in user_likes]
+
+    messages = (Message
+                .query
+                .filter(Message.id.in_(user_likes_msg_ids))
+                .all())
+
+    return render_template('users/likes.html', user=user, message=messages)
+
+
+
+############ CURR USER PROFILE ROUTES ############
 
 @app.route('/users/profile', methods=["GET", "POST"])
 def profile():
