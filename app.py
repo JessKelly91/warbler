@@ -234,7 +234,7 @@ def show_likes(user_id):
 
 @app.route('/users/add_like/<int:msg_id>', methods=['POST'])
 def add_like(msg_id):
-    """Add like to user.like"""
+    """Add like for the currently-logged-in user"""
 
     if not g.user:
         flash("Access unauthorized.", "danger")
@@ -245,6 +245,20 @@ def add_like(msg_id):
     db.session.commit()
 
     return redirect(f"/users/{g.user.id}/likes")
+
+@app.route('/users/delete_like/<int:msg_id>', methods=["POST"])
+def delete_like(msg_id)
+    """Delete a like for the currently-logged-in user"""
+
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+    
+    message = Message.query.get_or_404(msg_id)
+    g.user.likes.remove(message)
+    db.session.commit()
+
+    return redirect(f'users/{g.user.id}/likes')
 
 
 ############ CURR USER PROFILE ROUTES ############
