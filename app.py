@@ -6,7 +6,7 @@ from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 
 from forms import UserAddForm, LoginForm, MessageForm, EditUserForm
-from models import db, connect_db, User, Message
+from models import db, connect_db, User, Message, Follows
 
 CURR_USER_KEY = "curr_user"
 
@@ -111,9 +111,11 @@ def login():
 
 @app.route('/logout')
 def logout():
-    """Handle logout of user."""
+    """Handle logout of user.
+    Logout of session and return to login page
+    delete global user"""
+ 
 
-    # IMPLEMENT THIS
     do_logout()
     flash('You have been logged out!')
 
@@ -324,8 +326,17 @@ def homepage():
     """
 
     if g.user:
+        user = User.query.get_or_404(session[CURR_USER_KEY])
+        followed_users = (Follows
+                          .query
+                          .filter(Follows.user_following_id == user.id)
+                          .all())
+    
+        followed_users_ids = [followed_user.user_being_followed_id for followed_user in followed_users]
+
         messages = (Message
                     .query
+                    .filter(Message.user_id.in_(followed_users_ids))
                     .order_by(Message.timestamp.desc())
                     .limit(100)
                     .all())
