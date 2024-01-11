@@ -228,19 +228,8 @@ def show_likes(user_id):
         return redirect("/")
     
     user = User.query.get_or_404(user_id)
-    user_likes = (Likes
-             .query
-             .filter(Likes.user_id == user.id)
-             .all())
-    
-    user_likes_msg_ids = [user_like.message_id for user_like in user_likes]
 
-    messages = (Message
-                .query
-                .filter(Message.id.in_(user_likes_msg_ids))
-                .all())
-
-    return render_template('users/likes.html', user=user, message=messages)
+    return render_template('users/likes.html', user=user)
 
 
 @app.route('/users/add_like/<int:msg_id>', methods=['POST'])
