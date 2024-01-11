@@ -53,6 +53,7 @@
               <p>{{ msg.text }}</p>
             </div>
 
+            {% if g.user.id != msg.user.id %}
             <form method="POST" action="/users/{{'delete_like' if msg in user.likes else 'add_like'}}/{{ msg.id }}" id="messages-form">
               <button class="
                 btn 
@@ -62,6 +63,7 @@
                 <i class="fa fa-thumbs-up"></i> 
               </button>
             </form>
+            {% endif %}
             
           </li>
         {% endfor %}
