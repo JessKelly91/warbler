@@ -258,7 +258,7 @@ def delete_like(msg_id):
     g.user.likes.remove(message)
     db.session.commit()
 
-    return redirect(f'users/{g.user.id}/likes')
+    return redirect(f'/users/{g.user.id}/likes')
 
 
 ############ CURR USER PROFILE ROUTES ############
