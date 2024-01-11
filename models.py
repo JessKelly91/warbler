@@ -56,7 +56,7 @@ class User(db.Model):
 
     id = db.Column(
         db.Integer,
-        primary_key=True,
+        primary_key=True
     )
 
     email = db.Column(
@@ -107,7 +107,8 @@ class User(db.Model):
         "User",
         secondary="follows",
         primaryjoin=(Follows.user_following_id == id),
-        secondaryjoin=(Follows.user_being_followed_id == id)
+        secondaryjoin=(Follows.user_being_followed_id == id),
+        viewonly=True
     )
 
     likes = db.relationship(
@@ -194,10 +195,10 @@ class Message(db.Model):
     user_id = db.Column(
         db.Integer,
         db.ForeignKey('users.id', ondelete='CASCADE'),
-        nullable=False,
+        nullable=False
     )
 
-    user = db.relationship('User')
+    user = db.relationship('User', viewonly=True)
 
 
 def connect_db(app):

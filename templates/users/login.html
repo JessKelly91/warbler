@@ -8,6 +8,10 @@
     <div class="col-md-7 col-lg-5">
       <h2 class="join-message">Welcome back.</h2>
 
+      {% for message in get_flashed_messages()%}
+        <p>{{message}}</p>
+      {% endfor %}
+
       <form method="POST" id="user_form">
         {{ form.hidden_tag() }}
 
