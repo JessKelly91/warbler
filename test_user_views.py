@@ -44,3 +44,24 @@ class UserViewsTestCase(TestCase):
             self.testuser_id = self.testuser.id
             self.other_user_id = other_user.id
 
+
+    def test_list_users(self):
+        """Test the list_users view."""
+        with self.client as c:
+            resp = c.get('/users')
+            html = resp.get_data(as_text=True)
+
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn('<div class="card user-card">', html)
+    
+    def test_show_own_profile(self):
+        with self.client as c:
+            with c.session_transaction() as sess:
+                with app.app_context():
+                    sess[CURR_USER_KEY] = self.testuser_id
+
+            resp = c.get(f'/users/{self.testuser_id}')
+            html = resp.get_data(as_text=True)
+
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn('<a href="/users/profile" class="btn btn-outline-secondary">Edit Profile</a>', html)

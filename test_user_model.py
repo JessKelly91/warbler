@@ -79,24 +79,3 @@ class UserModelTestCase(TestCase):
 
         self.assertEqual(actual, expected)
 
-    
-
-    def test_failed_signup_method(self):
-        """ensure signup method fails when validations not met"""
-
-        with app.app_context():
-            no_pw_user = User.signup(
-                email="test", 
-                username="testuser", 
-                image_url=None)
-            
-            
-            
-
-            
-# TO BE IMPLEMENTED:
-# is_following detects followers correctly
-# is_followed_by detects is or is not following
-# user.authenticate works with valid details and fails with incorrect details
-# def logged_in_see_followers_following()
-# def logged_out_see_followers_following()

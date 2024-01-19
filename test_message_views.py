@@ -11,6 +11,7 @@ from app import app, CURR_USER_KEY
 with app.app_context():
     db.drop_all()
     db.create_all()
+    
 app.config['WTF_CSRF_ENABLED'] = False
 
 
@@ -85,10 +86,11 @@ class MessageViewTestCase(TestCase):
                     self.test_msg_id = test_msg.id
 
             resp = c.get(f"/messages/{self.test_msg_id}")
+            html = resp.get_data(as_text=True)
 
             self.assertEqual(resp.status_code, 200)
-            self.assertIn(b'<div class="message-area">', resp.data)
-            self.assertIn(b"Delete", resp.data)
+            self.assertIn('<div class="message-area">', html)
+            self.assertIn("Delete", html)
 
     def test_delete_own_message(self):
         """Testing deleting message"""
@@ -133,11 +135,12 @@ class MessageViewTestCase(TestCase):
                     self.test_msg_id = test_msg.id
 
             resp = c.get(f"/messages/{self.test_msg_id}")
+            html = resp.get_data(as_text=True)
 
             self.assertEqual(resp.status_code, 200)
-            self.assertIn(b'<div class="message-area">', resp.data)
+            self.assertIn('<div class="message-area">', html)
             #Delete button only available on own messages
-            self.assertNotIn(b"Delete", resp.data)
+            self.assertNotIn("Delete", html)
 
             #shouldn't be able to delete someone else's message by typing into address bar
             resp2 = c.post(f"/messages/{self.test_msg_id}/delete")
