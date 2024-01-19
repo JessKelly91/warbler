@@ -1,24 +1,11 @@
 """User model tests."""
-
-# run these tests like:
-#
-#    python -m unittest test_user_model.py
-
-
 import os
 from unittest import TestCase
 
 from models import db, User, Message, Follows
 
-# BEFORE we import our app, let's set an environmental variable
-# to use a different database for tests (we need to do this
-# before we import our app, since that will have already
-# connected to the database
-
+#connect to test database + import app
 os.environ['DATABASE_URL'] = "postgresql:///warbler-test"
-
-
-# Now we can import app
 
 from app import app
 
@@ -26,7 +13,6 @@ from app import app
 # once for all tests --- in each test, we'll delete the data
 # and create fresh new clean test data
 
-#added app context here based on error
 with app.app_context():
     db.drop_all()
     db.create_all()
@@ -54,7 +40,6 @@ class UserModelTestCase(TestCase):
             password="HASHED_PASSWORD"
         )
 
-        #added app context here based on error
         with app.app_context():
             db.session.add(u)
             db.session.commit()
@@ -62,3 +47,11 @@ class UserModelTestCase(TestCase):
             # User should have no messages & no followers
             self.assertEqual(len(u.messages), 0)
             self.assertEqual(len(u.followers), 0)
+
+# TO BE IMPLEMENTED:
+# __repr__ method
+# is_following detects followers correctly
+# is_followed_by detects is or is not following
+# user.create creates a new User
+# user.create fails if validations not met
+# user.authenticate works with valid details and fails with incorrect details

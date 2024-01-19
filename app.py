@@ -42,6 +42,10 @@ def add_user_to_g():
     else:
         g.user = None
 
+@app.errorhandler(404)
+def page_not_found(e):
+
+    return render_template('error_404.html')
 
 def do_login(user):
     """Log in user."""

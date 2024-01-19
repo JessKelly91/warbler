@@ -67,7 +67,7 @@ class MessageViewTestCase(TestCase):
             self.other_user_id = other_user.id
             
 
-    def test_add_message(self):
+    def test_add_own_message(self):
         """Can use add a message?"""
 
         # Since we need to change the session to mimic logging in,
@@ -139,7 +139,7 @@ class MessageViewTestCase(TestCase):
             self.assertNotIn(b"Delete", resp.data)
 
 
-    def test_delete_message(self):
+    def test_delete_own_message(self):
         """Testing deleting message"""
         with self.client as c:
             with c.session_transaction() as sess:
@@ -162,3 +162,8 @@ class MessageViewTestCase(TestCase):
             resp2 = c.get(f"/messages/{self.test_msg_id}")
             self.assertEqual(resp2.status_code, 404)
 
+#TO BE IMPLEMENTED
+#def test_add_other_message
+#def test_delete_other_message
+#def test_logged_out_add_message
+#def test_logged_out_delete_message
