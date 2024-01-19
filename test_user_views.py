@@ -43,7 +43,4 @@ class UserViewsTestCase(TestCase):
 
             self.testuser_id = self.testuser.id
             self.other_user_id = other_user.id
-            
-# TO BE IMPLEMENTED
-# def logged_in_see_followers_following()
-# def logged_out_see_followers_following()
+

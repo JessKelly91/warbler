@@ -55,3 +55,5 @@ class UserModelTestCase(TestCase):
 # user.create creates a new User
 # user.create fails if validations not met
 # user.authenticate works with valid details and fails with incorrect details
+# def logged_in_see_followers_following()
+# def logged_out_see_followers_following()

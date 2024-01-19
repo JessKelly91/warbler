@@ -45,7 +45,7 @@ def add_user_to_g():
 @app.errorhandler(404)
 def page_not_found(e):
 
-    return render_template('error_404.html')
+    return render_template('error_404.html'), 404
 
 def do_login(user):
     """Log in user."""
@@ -359,6 +359,11 @@ def messages_destroy(message_id):
         return redirect("/")
 
     msg = Message.query.get_or_404(message_id)
+    
+    if g.user.id != msg.user_id:
+        flash("You are only allowed to delete your own messages.", "danger")
+        return redirect("/")
+
     db.session.delete(msg)
     db.session.commit()
 

@@ -91,7 +91,7 @@ class MessageViewTestCase(TestCase):
             msg = Message.query.one()
             self.assertEqual(msg.text, "Hello")
 
-    def test_show_own_message(self):
+    def test_show_own_messages(self):
         """Show a single message from the logged in user"""
         with self.client as c:
             with c.session_transaction() as sess:
@@ -112,32 +112,6 @@ class MessageViewTestCase(TestCase):
             self.assertEqual(resp.status_code, 200)
             self.assertIn(b'<div class="message-area">', resp.data)
             self.assertIn(b"Delete", resp.data)
-
-    def test_show_other_message(self):
-        """Show a single message from anyone other than the logged in user"""
-
-        with self.client as c:
-            with c.session_transaction() as sess:
-                with app.app_context():
-                    sess[CURR_USER_KEY] = self.testuser_id
-                    
-                    test_msg = Message(text="test message", 
-                                       timestamp="2017-01-21 11:04:53.522807", 
-                                       user_id=self.other_user_id)
-            
-                    db.session.add(test_msg)
-                    db.session.commit()
-
-                    self.test_msg_id = test_msg.id
-
-            resp = c.get(f"/messages/{self.test_msg_id}")
-
-            self.assertEqual(resp.status_code, 200)
-            self.assertIn(b'<div class="message-area">', resp.data)
-
-            #Delete button only available on own messages
-            self.assertNotIn(b"Delete", resp.data)
-
 
     def test_delete_own_message(self):
         """Testing deleting message"""
@@ -162,8 +136,68 @@ class MessageViewTestCase(TestCase):
             resp2 = c.get(f"/messages/{self.test_msg_id}")
             self.assertEqual(resp2.status_code, 404)
 
-#TO BE IMPLEMENTED
-#def test_add_other_message
-#def test_delete_other_message
-#def test_logged_out_add_message
-#def test_logged_out_delete_message
+    def test_other_messages(self):
+        """Show a single message from anyone other than the logged in user
+        test ability to delete other peoples messages
+        """
+
+        with self.client as c:
+            with c.session_transaction() as sess:
+                with app.app_context():
+                    sess[CURR_USER_KEY] = self.testuser_id
+                    
+                    test_msg = Message(text="test message", 
+                                       timestamp="2017-01-21 11:04:53.522807", 
+                                       user_id=self.other_user_id)
+            
+                    db.session.add(test_msg)
+                    db.session.commit()
+
+                    self.test_msg_id = test_msg.id
+
+            resp = c.get(f"/messages/{self.test_msg_id}")
+
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn(b'<div class="message-area">', resp.data)
+            #Delete button only available on own messages
+            self.assertNotIn(b"Delete", resp.data)
+
+            #shouldn't be able to delete someone else's message by typing into address bar
+            resp2 = c.post(f"/messages/{self.test_msg_id}/delete")
+            self.assertEqual(resp2.status_code, 302)
+
+
+    def test_logged_out_add_message(self):
+
+        with self.client as c:
+            with c.session_transaction() as sess:
+                        
+                resp = c.post("/messages/new", data={"text": "Hello"})
+                # Make sure it redirects
+                self.assertEqual(resp.status_code, 302)
+
+                resp2 = c.post("/messages/new", data={"text": "Hello"}, follow_redirects=True)
+                #make sure the redirect includes the flash alert
+                self.assertIn(b'<div class="alert alert-danger">Access unauthorized.</div>' ,resp2.data)
+
+    def test_logged_out_delete_message(self):
+        
+        with self.client as c:
+            with c.session_transaction() as sess:
+                    with app.app_context():
+                        test_msg = Message(text="test message", 
+                                        timestamp="2017-01-21 11:04:53.522807", 
+                                        user_id=self.other_user_id)
+                
+                        db.session.add(test_msg)
+                        db.session.commit()
+
+                        test_msg_id = test_msg.id
+
+            #ensure it redirects
+            resp = c.post(f'/messages/{test_msg_id}/delete')
+            self.assertEqual(resp.status_code, 302)
+
+            #ensure the redirect includes flashed message
+            resp2 = c.post(f'/messages/{test_msg_id}/delete', follow_redirects=True)
+            self.assertIn(b'<div class="alert alert-danger">Access unauthorized.</div>', resp2.data)
