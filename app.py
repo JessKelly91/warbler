@@ -8,7 +8,9 @@ from sqlalchemy.exc import IntegrityError
 from forms import UserAddForm, LoginForm, MessageForm, EditUserForm
 from models import db, connect_db, User, Message, Follows, Likes
 
-CURR_USER_KEY = "curr_user"
+# CURR_USER_KEY = "curr_user"
+CURR_USER_KEY = ""
+
 
 app = Flask(__name__)
 
@@ -35,7 +37,7 @@ def add_user_to_g():
     """If we're logged in, add curr user to Flask global."""
 
     if CURR_USER_KEY in session:
-        g.user = User.query.get(session[CURR_USER_KEY])
+        g.user = db.session.get(User, session[CURR_USER_KEY])
 
     else:
         g.user = None
@@ -211,7 +213,7 @@ def stop_following(follow_id):
         flash("Access unauthorized.", "danger")
         return redirect("/")
 
-    followed_user = User.query.get(follow_id)
+    followed_user = User.query.get_pr_404(follow_id)
     g.user.following.remove(followed_user)
     db.session.commit()
 
@@ -338,9 +340,9 @@ def messages_add():
 
 @app.route('/messages/<int:message_id>', methods=["GET"])
 def messages_show(message_id):
-    """Show a message."""
-
-    msg = Message.query.get(message_id)
+    """Show a single message."""
+    
+    msg = Message.query.get_or_404(message_id)
     return render_template('messages/show.html', message=msg)
 
 
@@ -352,7 +354,7 @@ def messages_destroy(message_id):
         flash("Access unauthorized.", "danger")
         return redirect("/")
 
-    msg = Message.query.get(message_id)
+    msg = Message.query.get_or_404(message_id)
     db.session.delete(msg)
     db.session.commit()
 
