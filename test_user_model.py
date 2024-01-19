@@ -44,16 +44,59 @@ class UserModelTestCase(TestCase):
             db.session.add(u)
             db.session.commit()
 
-            # User should have no messages & no followers
+            # User should have no messages & no followers & no likes & shouldn't be followed by anyone
             self.assertEqual(len(u.messages), 0)
             self.assertEqual(len(u.followers), 0)
+            self.assertEqual(len(u.following), 0)
+            self.assertEqual(len(u.likes), 0)
 
+    def test_user_signup_method(self):
+        """ensure signup method works when validations met"""
+
+        with app.app_context():
+            valid_test_user = User.signup(
+                email="test@test.com", 
+                username="testuser", 
+                password="HASHED_PASSWORD",
+                image_url=None)
+            
+            # User should have no messages & no followers & no likes & shouldn't be followed by anyone
+            self.assertEqual(len(valid_test_user.messages), 0)
+            self.assertEqual(len(valid_test_user.followers), 0)
+            self.assertEqual(len(valid_test_user.following), 0)
+            self.assertEqual(len(valid_test_user.likes), 0)
+
+    def test_repr_method(self):
+
+        u = User(
+            email="test@test.com",
+            username="testuser",
+            password="HASHED_PASSWORD"
+        )
+
+        actual = repr(u)
+        expected = f"<User #{u.id}: {u.username}, {u.email}>"
+
+        self.assertEqual(actual, expected)
+
+    
+
+    def test_failed_signup_method(self):
+        """ensure signup method fails when validations not met"""
+
+        with app.app_context():
+            no_pw_user = User.signup(
+                email="test", 
+                username="testuser", 
+                image_url=None)
+            
+            
+            
+
+            
 # TO BE IMPLEMENTED:
-# __repr__ method
 # is_following detects followers correctly
 # is_followed_by detects is or is not following
-# user.create creates a new User
-# user.create fails if validations not met
 # user.authenticate works with valid details and fails with incorrect details
 # def logged_in_see_followers_following()
 # def logged_out_see_followers_following()
