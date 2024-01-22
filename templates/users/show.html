@@ -19,7 +19,7 @@
           </div>
 
           {% if g.user.id != user.id %}
-          <form method="POST" action="/users/{{'delete_like' if msg in g.user.likes else 'add_like'}}/{{ msg.id }}" id="messages-form">
+          <form method="POST" action="/messages/{{ msg.id }}/{{'delete_like' if msg in g.user.likes else 'like'}}" id="messages-form">
             <button class="
               btn 
               btn-sm 

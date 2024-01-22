@@ -240,7 +240,7 @@ def show_likes(user_id):
     return render_template('users/likes.html', user=user)
 
 
-@app.route('/users/add_like/<int:msg_id>', methods=['POST'])
+@app.route('/messages/<int:msg_id>/like', methods=['POST'])
 def add_like(msg_id):
     """Add like for the currently-logged-in user"""
 
@@ -254,7 +254,7 @@ def add_like(msg_id):
 
     return redirect(f"/users/{g.user.id}/likes")
 
-@app.route('/users/delete_like/<int:msg_id>', methods=["POST"])
+@app.route('/messages/<int:msg_id>/delete_like', methods=["POST"])
 def delete_like(msg_id):
     """Delete a like for the currently-logged-in user"""
 
